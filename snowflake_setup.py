@@ -129,13 +129,15 @@ def setup_via_connector(sf_config: dict):
     sql_script = get_setup_sql(database, schema)
 
     # Execute each statement separately
-    statements = [s.strip() for s in sql_script.split(";") if s.strip() and not s.strip().startswith("--")]
+    statements = sql_script.split(";")
     for stmt in statements:
-        # Skip comment-only lines
+        # Skip comment-only lines and build clean statement
         lines = [l for l in stmt.split("\n") if l.strip() and not l.strip().startswith("--")]
         if not lines:
             continue
-        clean_stmt = "\n".join(lines)
+        clean_stmt = "\n".join(lines).strip()
+        if not clean_stmt:
+            continue
         logger.info(f"Executing: {clean_stmt[:80]}...")
         cursor.execute(clean_stmt)
 
