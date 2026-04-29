@@ -1,0 +1,23 @@
+# ETL Pipeline Configuration
+
+input_file: orders.json
+output_file: snowflake_mock.csv
+
+valid_regions:
+  - US
+  - EU
+  - APAC
+  - LATAM
+  - EMEA
+
+logging:
+  level: INFO
+
+snowflake:
+  enabled: false
+  user: YOUR_USER
+  password: YOUR_PASSWORD
+  account: YOUR_ACCOUNT
+  database: YOUR_DATABASE
+  schema: YOUR_SCHEMA
+  table: orders_summary
