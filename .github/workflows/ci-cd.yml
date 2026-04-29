@@ -69,7 +69,7 @@ jobs:
   deploy:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
 
     steps:
       - name: Checkout code
@@ -85,27 +85,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Build package
+      - name: Create Snowflake config from secrets
         run: |
-          pip install build
-          python -m build
+          cat > snowflake_config.json <<EOF
+          {
+            "account": "${{ secrets.SNOWFLAKE_ACCOUNT }}",
+            "user": "${{ secrets.SNOWFLAKE_USER }}",
+            "password": "${{ secrets.SNOWFLAKE_PASSWORD }}",
+            "database": "${{ secrets.SNOWFLAKE_DATABASE }}",
+            "schema": "${{ secrets.SNOWFLAKE_SCHEMA }}",
+            "warehouse": "${{ secrets.SNOWFLAKE_WAREHOUSE }}",
+            "role": "${{ secrets.SNOWFLAKE_ROLE }}",
+            "table": "orders_summary"
+          }
+          EOF
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist/
-
-      - name: Run ETL in production (Snowflake)
-        if: env.SNOWFLAKE_ACCOUNT != ''
-        env:
-          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
-          SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
-          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
-          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+      - name: Run ETL to Snowflake
         run: |
-          echo "Snowflake deployment would run here with secrets"
-          # python etl.py --snowflake
+          python etl.py --snowflake
