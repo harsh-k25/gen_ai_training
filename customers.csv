@@ -1,0 +1,9 @@
+customer_id,customer_name,email,region,tier
+101,Alice Johnson,alice@example.com,US,Gold
+102,Bob Smith,bob@example.com,EU,Silver
+103,Charlie Brown,charlie@example.com,APAC,Bronze
+104,Diana Prince,diana@example.com,US,Gold
+105,Evan Wright,evan@example.com,EU,Silver
+106,Fiona Green,fiona@example.com,LATAM,Bronze
+107,George Harris,george@example.com,EMEA,Platinum
+108,Hannah Lee,hannah@example.com,US,Silver

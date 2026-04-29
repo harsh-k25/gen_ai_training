@@ -2,9 +2,14 @@
   "account": "your_account_here",
   "user": "your_username_here",
   "password": "your_password_here",
-  "database": "your_database_here",
-  "schema": "your_schema_here",
-  "warehouse": "your_warehouse_here",
-  "role": "your_role_here",
-  "table": "orders_summary"
+  "database": "ETL_ANALYTICS",
+  "schema": "ORDER_ANALYTICS",
+  "warehouse": "COMPUTE_WH",
+  "role": "SYSADMIN",
+  "tables": {
+    "dim_customers": "dim_customers",
+    "dim_products": "dim_products",
+    "fact_orders": "fact_orders",
+    "fact_orders_summary": "fact_orders_summary"
+  }
 }

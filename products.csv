@@ -1,0 +1,9 @@
+product_id,product_name,category,unit_price
+P001,Laptop,Electronics,1200.00
+P002,Headphones,Electronics,150.00
+P003,Desk Chair,Furniture,300.00
+P004,Monitor,Electronics,400.00
+P005,Coffee Table,Furniture,250.00
+P006,Book,Stationery,25.00
+P007,Keyboard,Electronics,85.00
+P008,Standing Desk,Furniture,550.00

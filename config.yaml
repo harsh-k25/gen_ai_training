@@ -1,8 +1,15 @@
 # ETL Pipeline Configuration
 
-input_file: orders.json
-output_file: snowflake_mock.csv
+# --- Source files ---
+orders_file: orders.json
+customers_file: customers.csv
+products_file: products.csv
+order_items_file: order_items.csv
 
+# --- Output directory (mock/CSV mode) ---
+output_dir: output/
+
+# --- Validations ---
 valid_regions:
   - US
   - EU
@@ -10,14 +17,15 @@ valid_regions:
   - LATAM
   - EMEA
 
+# --- Logging ---
 logging:
   level: INFO
 
+# --- Snowflake target schema & tables ---
 snowflake:
-  enabled: false
-  user: YOUR_USER
-  password: YOUR_PASSWORD
-  account: YOUR_ACCOUNT
-  database: YOUR_DATABASE
-  schema: YOUR_SCHEMA
-  table: orders_summary
+  config_file: snowflake_config.json
+  tables:
+    dim_customers: dim_customers
+    dim_products: dim_products
+    fact_orders: fact_orders
+    fact_orders_summary: fact_orders_summary

@@ -59,12 +59,25 @@ jobs:
         run: |
           python etl.py
 
-      - name: Upload coverage to Codecov
+      - name: Verify output files
+        run: |
+          echo "=== Output files ==="
+          ls -la output/
+          echo "=== dim_customers ==="
+          head -5 output/dim_customers.csv
+          echo "=== dim_products ==="
+          head -5 output/dim_products.csv
+          echo "=== fact_orders ==="
+          head -5 output/fact_orders.csv
+          echo "=== fact_orders_summary ==="
+          cat output/fact_orders_summary.csv
+
+      - name: Run test coverage
         if: matrix.python-version == '3.11'
         run: |
           pip install coverage
-          coverage run -m pytest test_etl.py
-          coverage report
+          coverage run -m pytest test_etl.py -v
+          coverage report --show-missing
 
   deploy:
     needs: test
@@ -96,10 +109,26 @@ jobs:
             "schema": "${{ secrets.SNOWFLAKE_SCHEMA }}",
             "warehouse": "${{ secrets.SNOWFLAKE_WAREHOUSE }}",
             "role": "${{ secrets.SNOWFLAKE_ROLE }}",
-            "table": "orders_summary"
+            "tables": {
+              "dim_customers": "dim_customers",
+              "dim_products": "dim_products",
+              "fact_orders": "fact_orders",
+              "fact_orders_summary": "fact_orders_summary"
+            }
           }
           EOF
 
-      - name: Run ETL to Snowflake
+      - name: Setup Snowflake schema & tables
         run: |
+          echo "Creating database, schema, and tables in Snowflake..."
+          python snowflake_setup.py --config snowflake_config.json
+
+      - name: Run ETL pipeline to Snowflake
+        run: |
+          echo "Running full ETL pipeline with Snowflake target..."
           python etl.py --snowflake
+
+      - name: Cleanup secrets
+        if: always()
+        run: |
+          rm -f snowflake_config.json
